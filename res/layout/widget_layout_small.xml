@@ -10,16 +10,44 @@
               android:background="@drawable/city_bg"
               android:id="@+id/SmallBase">
 
+    <LinearLayout android:orientation="horizontal"
+            android:paddingTop="3sp"
+            android:paddingRight="9sp"
+            android:paddingLeft="6sp"
+            android:paddingBottom="0sp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+        <ImageView android:layout_width="40sp"
+                   android:layout_height="40sp"
+                   android:src="@drawable/icon"
+                   android:paddingTop="6sp"
+                   android:layout_gravity="left" />
+
+        <LinearLayout android:orientation="vertical"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:paddingLeft="5sp"
+              android:paddingBottom="7sp" >
 
             <TextView android:layout_width="wrap_content"
-                      android:layout_height="wrap_content"
-                      android:layout_gravity="right"
-                      android:paddingRight="10sp"
-                      android:paddingTop="5sp"
+                      android:layout_height="31sp"
+                      android:layout_gravity="left"
                       android:id="@+id/Temp"
-                      android:textSize="30sp"
-                      android:textColor="#FFFFFF"
-                    android:paddingBottom="10sp" />
+                      android:textSize="28sp"
+                      android:textColor="#FFFFFF" />
+
+
+            <TextView android:layout_width="wrap_content"
+                  android:layout_height="wrap_content"
+                  android:layout_gravity="left"
+                  android:id="@+id/DeltaTemp"
+                  android:textSize="12sp"
+                  android:textColor="#557777" />
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <LinearLayout android:orientation="vertical"
                   android:layout_width="wrap_content"
@@ -32,7 +60,8 @@
                       android:layout_gravity="center"
                       android:textSize="10sp"
                       android:gravity="center"
-                      android:textColor="#669999" />
+                      android:text="загрузка"
+                      android:textColor="#666666" />
 
     </LinearLayout>
 

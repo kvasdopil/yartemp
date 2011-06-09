@@ -7,14 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.format.Time;
 import android.widget.RemoteViews;
-import android.widget.Toast;
 
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
-import java.security.IdentityScope;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class YartempWidgetProvider extends AppWidgetProvider {
     @Override
@@ -41,25 +37,24 @@ public class YartempWidgetProvider extends AppWidgetProvider {
     private RemoteViews buildUpdate(int[] ids, Context context)
     {
         RemoteViews updateView;
-        int val;
-
-        try {
-            val = Integer.decode(GetTemp("http://yartemp.com/webdata/"));
-            if(val > 0)
-                temp = String.format("+%s °C", val);
-            else
-                temp = String.format("%s °C", val);
-        }
-        catch(Exception e) {}
+        updateView = new RemoteViews(context.getPackageName(), R.layout.widget_layout_small);
 
         Time time = new Time();
         time.setToNow();
 
-        Toast.makeText(context, "woo", Toast.LENGTH_SHORT).show();
+        try {
+            GetTemp("http://yartemp.com/webdata/");
 
-        updateView = new RemoteViews(context.getPackageName(), R.layout.widget_layout_small);
-        updateView.setTextViewText(R.id.Temp, temp);
-        updateView.setTextViewText(R.id.Updated, time.format("обновлено в %H:%M:%S"));
+            String temp = String.format("%s%d °C", (val > 0 ? "+" : ""), val);
+            String deltaTemp = String.format("%s%d °C в час", (delta > 0 ? "+" : ""), delta);
+
+            updateView.setTextViewText(R.id.Temp, temp);
+            updateView.setTextViewText(R.id.DeltaTemp, deltaTemp);
+            updateView.setTextViewText(R.id.Updated, time.format("обновлено в %H:%M"));
+        }
+        catch(Exception e) {
+            // nothing to do here
+        }
 
         //Подготавливаем Intent для Broadcast
         Intent intent = new Intent(context, YartempWidgetProvider.class);
@@ -76,30 +71,31 @@ public class YartempWidgetProvider extends AppWidgetProvider {
         return updateView;
     }
 
+    // я хрен знает как в этой вашей яве передавать объекты по ссылкам, поэтому вот
+    private int val;
+    private int delta;
 
-
-    public String GetTemp(String urlsite) throws Exception
+    public void GetTemp(String urlsite) throws Exception
     {
-            URL url = new URL(urlsite);
-            URLConnection conn = url.openConnection();
-            InputStreamReader rd = new InputStreamReader(conn.getInputStream());
-            StringBuilder allpage = new StringBuilder();
-            int n = 0;
-            char[] buffer = new char[40000];
-            while(n >= 0)
-            {
-                n = rd.read(buffer, 0, buffer.length);
-                if(n>0)
-                    allpage.append(buffer, 0, n);
-            }
+        URL url = new URL(urlsite);
+        URLConnection conn = url.openConnection();
+        InputStreamReader rd = new InputStreamReader(conn.getInputStream());
+        StringBuilder allpage = new StringBuilder();
+        int n = 0;
+        char[] buffer = new char[40000];
+        while(n >= 0)
+        {
+            n = rd.read(buffer, 0, buffer.length);
+            if(n>0)
+                allpage.append(buffer, 0, n);
+        }
 
-            final Pattern pattern = Pattern.compile("^([0-9]+).*");
-            Matcher matcher = pattern.matcher(allpage.toString());
-            if(!matcher.find())
-                throw new RuntimeException();
+        String[] res = allpage.toString().split(";");
 
-            return matcher.group(1);
+        if(res.length < 3)
+           throw new RuntimeException();
+
+        this.val = Math.round(Float.valueOf(res[0]));
+        this.delta = Math.round(Float.valueOf(res[2]));
     }
-
-    private String temp = "--";
 }
