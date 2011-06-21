@@ -16,10 +16,11 @@ public final class R {
         public static final int icon=0x7f020002;
     }
     public static final class id {
-        public static final int DeltaTemp=0x7f060002;
+        public static final int DeltaTemp=0x7f060003;
         public static final int SmallBase=0x7f060000;
-        public static final int Temp=0x7f060001;
-        public static final int Updated=0x7f060003;
+        public static final int Temp=0x7f060002;
+        public static final int Updated=0x7f060004;
+        public static final int icon=0x7f060001;
     }
     public static final class layout {
         public static final int widget_layout_small=0x7f030000;
@@ -27,6 +28,11 @@ public final class R {
     public static final class string {
         public static final int app_name=0x7f050000;
         public static final int app_name_small=0x7f050001;
+        public static final int current=0x7f050004;
+        public static final int error=0x7f050006;
+        public static final int hourRate=0x7f050003;
+        public static final int loading=0x7f050005;
+        public static final int updatedNote=0x7f050002;
     }
     public static final class xml {
         public static final int widget_small=0x7f040000;
