@@ -6,5 +6,4 @@
     <string name="hourRate" formatted="false">%s%d °C в час</string>
     <string name="current" formatted="false">"%s%d °C</string>
     <string name="loading">загрузка...</string>
-    <string name="error">ошибка =(</string>
 </resources>

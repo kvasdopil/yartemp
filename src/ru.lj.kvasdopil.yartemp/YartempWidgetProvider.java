@@ -40,9 +40,8 @@ public class YartempWidgetProvider extends AppWidgetProvider {
             updateView.setTextViewText(R.id.Temp, temp);
             updateView.setTextViewText(R.id.DeltaTemp, deltaTemp);
             updateView.setTextViewText(R.id.Updated, time.format(context.getString(R.string.updatedNote)));
-        }
-        catch(Exception e) {
-            updateView.setTextViewText(R.id.Updated, context.getString(R.string.error));
+        } catch(Exception e) {
+            // ignore
         }
 
         /*//Подготавливаем Intent для Broadcast
