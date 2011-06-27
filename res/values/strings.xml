@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Виджет Yartemp.com</string>
-    <string name="app_name_small">Виджет Yartemp.com</string>
-    <string name="updatedNote">обновлено в %H:%M</string>
-    <string name="hourRate" formatted="false">%s%d °C в час</string>
+    <string name="app_name">Yartemp.com widget</string>
+    <string name="app_name_small">Yartemp.com widget</string>
+    <string name="updatedNote">updated at %H:%M</string>
+    <string name="hourRate" formatted="false">%s%d °C per hour</string>
     <string name="current" formatted="false">"%s%d °C</string>
-    <string name="loading">загрузка...</string>
+    <string name="loading">loading...</string>
 </resources>
