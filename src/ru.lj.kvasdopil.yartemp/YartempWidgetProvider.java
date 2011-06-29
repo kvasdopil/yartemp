@@ -6,6 +6,7 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.text.format.Time;
+import android.util.Log;
 import android.widget.RemoteViews;
 
 import java.io.InputStreamReader;
@@ -16,66 +17,47 @@ public class YartempWidgetProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
     {
-        RemoteViews updateView = buildUpdate(appWidgetIds, context);
-        appWidgetManager.updateAppWidget(appWidgetIds, updateView);
-        super.onUpdate(context, appWidgetManager, appWidgetIds);
-    }
-
-    @Override
-    public void onReceive(Context context, Intent intent)
-    {
-        final String action = intent.getAction();
-
-        if(AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action))
-        {
-            int ids[] = {}; //
-            this.onUpdate(context, AppWidgetManager.getInstance(context), ids);
+        for(int i = 0, l = appWidgetIds.length; i < l; i++) {
+            appWidgetManager.updateAppWidget(appWidgetIds[i], buildUpdate(appWidgetIds[i], context));
         }
-        super.onReceive(context, intent);
     }
 
-    private RemoteViews buildUpdate(int[] ids, Context context)
+    private RemoteViews buildUpdate(int id, Context context)
     {
-        RemoteViews updateView;
-        updateView = new RemoteViews(context.getPackageName(), R.layout.widget_layout_small);
+        RemoteViews updateView = new RemoteViews(context.getPackageName(), R.layout.widget_layout_small);
+
+        updateView.setTextViewText(R.id.Updated, context.getString(R.string.loading));
 
         Time time = new Time();
         time.setToNow();
 
         try {
-            GetTemp("http://yartemp.com/webdata/");
+            TempUpdate update = GetTemp("http://yartemp.com/webdata/");
 
-            String temp = String.format("%s%d °C", (val > 0 ? "+" : ""), val);
-            String deltaTemp = String.format("%s%d °C в час", (delta > 0 ? "+" : ""), delta);
+            String temp = context.getString(R.string.current, (update.val > 0 ? "+" : ""), update.val);
+            String deltaTemp = context.getString(R.string.hourRate, (update.delta > 0 ? "+" : ""), update.delta);
 
             updateView.setTextViewText(R.id.Temp, temp);
             updateView.setTextViewText(R.id.DeltaTemp, deltaTemp);
-            updateView.setTextViewText(R.id.Updated, time.format("обновлено в %H:%M"));
-        }
-        catch(Exception e) {
-            // nothing to do here
+            updateView.setTextViewText(R.id.Updated, time.format(context.getString(R.string.updatedNote)));
+        } catch(Exception e) {
+            // ignore
         }
 
-        //Подготавливаем Intent для Broadcast
-        Intent intent = new Intent(context, YartempWidgetProvider.class);
-        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
-        //intent.putExtra("ids", ids);
+        /*//Подготавливаем Intent для Broadcast
+        Intent intent = new Intent(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+        intent.putExtra( AppWidgetManager.EXTRA_APPWIDGET_IDS, new int[] { id } );
 
         //создаем наше событие
         PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 
         //регистрируем наше событие
-        updateView.setOnClickPendingIntent(R.id.SmallBase, pendingIntent);
+        updateView.setOnClickPendingIntent(R.id.icon, pendingIntent);*/
 
         return updateView;
     }
 
-    // я хрен знает как в этой вашей яве передавать объекты по ссылкам, поэтому вот
-    private int val;
-    private int delta;
-
-    public void GetTemp(String urlsite) throws Exception
+    public TempUpdate GetTemp(String urlsite) throws Exception
     {
         URL url = new URL(urlsite);
         URLConnection conn = url.openConnection();
@@ -95,7 +77,16 @@ public class YartempWidgetProvider extends AppWidgetProvider {
         if(res.length < 3)
            throw new RuntimeException();
 
-        this.val = Math.round(Float.valueOf(res[0]));
-        this.delta = Math.round(Float.valueOf(res[2]));
+        return new TempUpdate(Math.round(Float.valueOf(res[0])), Math.round(Float.valueOf(res[2])));
+    }
+
+    class TempUpdate {
+        public final int val;
+        public final int delta;
+
+        TempUpdate(int val, int delta) {
+            this.val = val;
+            this.delta = delta;
+        }
     }
 }

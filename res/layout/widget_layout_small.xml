@@ -22,6 +22,7 @@
                    android:layout_height="40sp"
                    android:src="@drawable/icon"
                    android:paddingTop="6sp"
+                   android:id="@+id/icon"
                    android:layout_gravity="left" />
 
         <LinearLayout android:orientation="vertical"
@@ -60,7 +61,7 @@
                       android:layout_gravity="center"
                       android:textSize="10sp"
                       android:gravity="center"
-                      android:text="загрузка"
+                      android:text="@string/loading"
                       android:textColor="#666666" />
 
     </LinearLayout>
